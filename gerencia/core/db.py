@@ -31,8 +31,16 @@ def config(key: str) -> str | None:
     return _config(key)
 
 
+def modo_demo() -> bool:
+    """Sin claves de Supabase, la app funciona con datos inventados (core/demo.py)."""
+    return not _config("SUPABASE_URL") and not _config("SUPABASE_SERVICE_KEY")
+
+
 @st.cache_resource
 def client() -> Client:
+    if modo_demo():
+        from core import demo
+        return demo.Cliente()
     url, key = _config("SUPABASE_URL"), _config("SUPABASE_SERVICE_KEY")
     if not url or not key:
         faltan = [n for n, v in (("SUPABASE_URL", url), ("SUPABASE_SERVICE_KEY", key)) if not v]

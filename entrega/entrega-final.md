@@ -1,10 +1,10 @@
 # Entrega final · LilOS Gerencia
 
-**Nombre y apellidos:** Guillermo Pinto [PENDIENTE: comprobar el nombre completo]
+**Nombre y apellidos:** Guillermo Jesús Pinto Henriques
 
 ## 1. Enlaces
 
-- **App desplegada:** https://lilostest.streamlit.app
+- **App desplegada:** https://lilos-gerencia.streamlit.app (versión de demostración, con datos inventados; los PIN de prueba salen al entrar)
 - **Repositorio:** https://github.com/Guille1406/lilos-gerencia
 
 ## 2. Problema y usuario
@@ -42,16 +42,18 @@ https://github.com/Guille1406/lilos-gerencia/blob/main/especificacion.md
 | Yo como usuario | Entrar a la pantalla Hoy | Error `TypeError` en `registro_rapido()` | Corregido el fallo |
 | Yo como usuario | La app publicada en Streamlit Cloud | No encontraba las claves de Supabase y no estaba claro por qué | Un diagnóstico que enseña los nombres de las claves, nunca sus valores |
 | Yo como usuario | Entrar como invitado | La app iba directa al PIN y no había por dónde entrar | Botón «Entrar como invitado» en la pantalla del PIN |
-| [PENDIENTE: compañero/a] | [PENDIENTE] | [PENDIENTE] | [PENDIENTE] |
+| Trabajadores de los locales | Apuntar temperaturas desde un iPhone | El teclado numérico no tiene «-» y no se podían apuntar negativas | Ya se pueden apuntar temperaturas negativas |
+| Trabajadores de los locales | Consultar las alertas | Solo salían a gerencia | Alertas en el menú de todo el equipo |
+| Trabajadoras de los locales | Crear etiquetas | Pidieron categorías propias, filtrar por partida y una etiqueta de «abierto el día» | Categorías, partidas y etiqueta `ABIERTO` con fecha y hora |
 
-- **Feedback que he dado a un compañero** (opcional): [PENDIENTE: a quién, y lo que le escribí en el debate del hito]
+Las tres últimas filas salen del Q&A con los trabajadores en el uso diario, sobre la versión web de LilOS que continúa esta app y sobre la etiquetadora. Las cuatro primeras son de la app entregada.
 
 ## 7. Pitch escrito
 
 1. Los gerentes de los tres restaurantes de Lilo Brunch tienen que mantener neveras, hornos y demás equipos mientras trabajan en plena sala, y las revisiones se les pueden pasar de fecha.
 2. LilOS Gerencia les enseña qué toca esta semana, guarda la ficha y la bitácora de cada equipo, y escala a dirección lo que lleva más de 7 días atrasado.
 3. La IA contesta con los datos de la propia app, lee la foto de la placa de un equipo y orienta ante una avería, sin que el gerente tenga que buscar en documentos.
-4. Al usarla yo mismo vi que la pantalla Hoy tenía botones demasiado grandes y una rutina que sobraba, así que la compacté y metí la plancha dentro del cierre.
+4. Mis trabajadores la han probado en el día a día de los locales y eso ha cambiado el producto: por ejemplo, el teclado del iPhone no tenía «-» para apuntar temperaturas negativas, y las alertas pasaron a verlas todos.
 5. Después llevaría lo aprendido a una web propia para las tablets de cada local, que ya está en marcha, con la pantalla Hoy como lista de comprobación de un avión.
 
 ## 8. Capturas

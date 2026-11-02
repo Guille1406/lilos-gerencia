@@ -257,6 +257,11 @@ def pantalla_acceso(local: str = "") -> None:
                       type="tertiary")
             st.stop()
 
+        if db.modo_demo():
+            from core import demo
+            st.info("**Versión de demostración, con datos inventados.** Prueba con el PIN "
+                    + " o ".join(f"**{pin}** ({rol.lower()})" for rol, pin in demo.PINES.items())
+                    + f". Dirección: usuario **{demo.USUARIO_DIRECCION[0]}**, PIN **{demo.USUARIO_DIRECCION[1]}**.")
         puntos = len(st.session_state.get("pin", ""))
         st.markdown(f"<p style='text-align:center;font-size:2rem;letter-spacing:.6rem;margin:.2rem 0'>"
                     f"{'●' * puntos}{'○' * (LARGO_PIN - puntos)}</p>", unsafe_allow_html=True)

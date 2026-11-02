@@ -1,11 +1,11 @@
 # LilOS Gerencia
 
-**Enlace a la app:** https://lilostest.streamlit.app
-**Autor/a:** Guillermo Pinto
+**Enlace a la app:** https://lilos-gerencia.streamlit.app (versión de demostración, con datos inventados; los PIN de prueba salen al entrar)
+**Autor/a:** Guillermo Jesús Pinto Henriques
 
 ## Pitch
 
-Los gerentes de los tres restaurantes de Lilo Brunch tienen que mantener neveras, hornos y demás equipos mientras trabajan en plena sala, y las revisiones se les pueden pasar de fecha. LilOS Gerencia les enseña qué toca esta semana, guarda la ficha y la bitácora de cada equipo, y escala a dirección lo que lleva más de 7 días atrasado. La IA contesta con los datos de la propia app, lee la foto de la placa de un equipo y orienta ante una avería, sin que el gerente tenga que buscar en documentos. Al usarla yo mismo vi que la pantalla Hoy tenía botones demasiado grandes y una rutina que sobraba, así que la compacté y metí la plancha dentro del cierre. Después llevaría lo aprendido a una web propia para las tablets de cada local, que ya está en marcha, con la pantalla Hoy como lista de comprobación de un avión.
+Los gerentes de los tres restaurantes de Lilo Brunch tienen que mantener neveras, hornos y demás equipos mientras trabajan en plena sala, y las revisiones se les pueden pasar de fecha. LilOS Gerencia les enseña qué toca esta semana, guarda la ficha y la bitácora de cada equipo, y escala a dirección lo que lleva más de 7 días atrasado. La IA contesta con los datos de la propia app, lee la foto de la placa de un equipo y orienta ante una avería, sin que el gerente tenga que buscar en documentos. Mis trabajadores la han probado en el día a día de los locales y eso ha cambiado el producto: por ejemplo, el teclado del iPhone no tenía «-» para apuntar temperaturas negativas, y las alertas pasaron a verlas todos. Después llevaría lo aprendido a una web propia para las tablets de cada local, que ya está en marcha, con la pantalla Hoy como lista de comprobación de un avión.
 
 ## El problema
 
@@ -47,20 +47,22 @@ Para enseñarla sin riesgo hay un **perfil invitado**: puede recorrer la app, pe
 | Yo como usuario | Entrar a la pantalla Hoy | Error `TypeError` en `registro_rapido()` | Corregido el fallo |
 | Yo como usuario | La app publicada en Streamlit Cloud | No encontraba las claves de Supabase y no estaba claro por qué | Un diagnóstico que enseña los nombres de las claves, nunca sus valores |
 | Yo como usuario | Entrar como invitado | La app iba directa al PIN y no había por dónde entrar | Botón «Entrar como invitado» en la pantalla del PIN |
-| [PENDIENTE: compañero/a] | [PENDIENTE] | [PENDIENTE] | [PENDIENTE] |
+| Trabajadores de los locales | Apuntar temperaturas desde un iPhone | El teclado numérico no tiene «-» y no se podían apuntar negativas | Ya se pueden apuntar temperaturas negativas |
+| Trabajadores de los locales | Consultar las alertas | Solo salían a gerencia | Alertas en el menú de todo el equipo |
+| Trabajadoras de los locales | Crear etiquetas | Pidieron categorías propias, filtrar por partida y una etiqueta de «abierto el día» | Categorías, partidas y etiqueta `ABIERTO` con fecha y hora |
+
+Las tres últimas filas salen del Q&A con los trabajadores en el uso diario, sobre la versión web de LilOS que continúa esta app y sobre la etiquetadora. Las cuatro primeras son de la app de este repositorio.
 
 ## Ejecutar en local (opcional)
-
-Necesita un proyecto de Supabase.
 
 ```bash
 pip install -r gerencia/requirements.txt
 streamlit run gerencia/app.py
 ```
 
-1. Copia `.streamlit/secrets.toml.example` como `.streamlit/secrets.toml` y pon tus claves. Ese archivo no se sube nunca a git.
-2. En el editor SQL de Supabase, ejecuta `supabase/schema.sql`, `supabase/mantenimiento.sql`, `supabase/appcc.sql`, `supabase/comunicados.sql` y `supabase/acceso.sql`. El resto de archivos de `supabase/` activan módulos opcionales.
-3. Crea la primera cuenta con `python gerencia/crear_admin.py`.
+Sin ninguna clave arranca en **modo demostración**: datos inventados que viven en tu sesión y se pierden al cerrar la pestaña (`gerencia/core/demo.py`). Para que funcione el asistente, copia `.streamlit/secrets.toml.example` como `.streamlit/secrets.toml` y pon solo `GEMINI_API_KEY`. Ese archivo no se sube nunca a git.
+
+Para usarla con una base de datos propia, añade también las claves de Supabase, ejecuta en su editor SQL `supabase/schema.sql`, `supabase/mantenimiento.sql`, `supabase/appcc.sql`, `supabase/comunicados.sql` y `supabase/acceso.sql` (el resto de `supabase/` activa módulos opcionales) y crea la primera cuenta con `python gerencia/crear_admin.py`.
 
 Para las pruebas: `pip install pytest` y `pytest gerencia/tests`.
 

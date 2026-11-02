@@ -11,7 +11,7 @@ App para que los gerentes de los tres restaurantes de Lilo Brunch controlen el m
 - Python 3.11 o superior.
 - Interfaz: Streamlit (ruta A). Archivo principal: `gerencia/app.py`.
 - IA: API de Gemini en su plan gratuito, con el SDK `openai` y la dirección compatible de Google. Los modelos están en la constante `MODELOS_GEMINI` de `gerencia/core/ia.py`; si uno se satura, se prueba el siguiente.
-- Datos: Supabase (PostgreSQL). Las tablas están en `supabase/`.
+- Datos: sin claves de Supabase, modo demostración con datos inventados en memoria (`gerencia/core/demo.py`). Con claves, Supabase (PostgreSQL), con las tablas de `supabase/`.
 - Archivos: `gerencia/core/` (lógica), `gerencia/paginas/` (páginas), `gerencia/tests/` (pruebas), `gerencia/requirements.txt` (dependencias) y `README.md`.
 - La especificación completa está en [especificacion.md](especificacion.md).
 

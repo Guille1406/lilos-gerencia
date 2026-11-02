@@ -42,6 +42,8 @@ with st.sidebar:
         st.caption("Puedes probarlo todo: nada de lo que hagas se guarda.")
     else:
         st.markdown(f"👤 **{persona['name']}** · {sesion.ROLES.get(persona.get('rol'), '')}")
+    if db.modo_demo():
+        st.caption("🧪 Demostración: datos inventados. Lo que cambies se pierde al cerrar la pestaña.")
     try:
         locales = db.locales()
     except Exception:  # la tabla aún no existe en Supabase

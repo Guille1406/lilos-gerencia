@@ -43,7 +43,7 @@ La app tiene además otras páginas del día a día del restaurante (Hoy, Rumbo,
 
 - Coste cero: capa gratuita de la API y despliegue gratuito (ruta A).
 - Las claves van en secretos, nunca en el código.
-- Sin datos personales reales en el repositorio ni en la versión pública: la app del reto debe conectarse a una base de demostración con datos inventados.
+- Sin datos personales reales en el repositorio ni en la versión pública: sin claves de Supabase, la app arranca en modo demostración, con datos inventados que viven en la sesión de cada visitante (`gerencia/core/demo.py`).
 - Lenguaje sencillo, para alguien sin conocimientos técnicos.
 - Pocos clics y textos directos: se usa en mitad del servicio, muchas veces desde el móvil.
 - El invitado puede recorrer la app, pero no guardar, borrar ni enviar nada.
