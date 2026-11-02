@@ -1,0 +1,7 @@
+streamlit>=1.65
+supabase>=2.0
+python-dateutil>=2.9
+openai>=1.50
+httpx>=0.27
+pillow>=10
+segno>=1.6

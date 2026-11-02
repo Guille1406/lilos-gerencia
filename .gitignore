@@ -1,0 +1,16 @@
+# Claves: NUNCA subir
+.env
+.env.*
+.streamlit/secrets.toml
+gerencia/.streamlit/secrets.toml
+
+# Entorno de Python
+.venv/
+gerencia/.venv/
+__pycache__/
+.pytest_cache/
+
+# Varios
+.DS_Store
+Thumbs.db
+*.log
