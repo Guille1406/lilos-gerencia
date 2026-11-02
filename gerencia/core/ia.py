@@ -13,6 +13,7 @@ equipo desde una foto, sugerir su plan de mantenimiento, orientar ante una aver�
 import base64
 import io
 import json
+import sys
 import time
 from datetime import date
 
@@ -27,6 +28,8 @@ GEMINI = "https://generativelanguage.googleapis.com/v1beta/openai/"
 MODELOS_GEMINI = "gemini-flash-lite-latest,gemini-3.5-flash-lite,gemini-flash-latest"
 SEGUNDOS_POR_LLAMADA = 25   # si un modelo no contesta en este tiempo, se pasa al siguiente
 SEGUNDOS_POR_PREGUNTA = 60  # pasado este tiempo, el asistente avisa en vez de seguir «Pensando…»
+RONDAS = 2                  # veces que se prueba la lista de modelos antes de avisar
+PAUSA_ENTRE_RONDAS = 4      # segundos
 
 SISTEMA = (
     "Eres el asistente del gerente de Lilo Brunch, un grupo de tres restaurantes de brunch en España (Lilo Sagrada "
@@ -78,26 +81,35 @@ def _completar(mensajes: list[dict], herramientas: list[dict] | None = None, jso
     extra = {"tools": herramientas} if herramientas else {}
     if json_salida:
         extra["response_format"] = {"type": "json_object"}
-    ultimo = None
-    for modelo in _modelos():
-        if hasta is not None and time.monotonic() >= hasta:
-            raise _fallo("La IA está tardando demasiado. Prueba otra vez en un minuto.")
-        try:
-            respuesta = _cliente().chat.completions.create(model=modelo, messages=mensajes, **extra)
-            return respuesta.choices[0].message
-        except (openai.RateLimitError, openai.InternalServerError, openai.APITimeoutError) as e:
-            ultimo = e  # cuota gratuita agotada o modelo saturado: siguiente modelo
-        except openai.AuthenticationError:
-            raise _fallo("La clave de la IA no es válida.")
-        except openai.NotFoundError:
-            raise _fallo(f"El modelo «{modelo}» no existe en este proveedor. Revisa IA_MODELOS.")
-        except openai.APIConnectionError:
-            raise _fallo("No hay conexión con la IA. Revisa internet.")
-        except openai.APIStatusError as e:
-            raise _fallo(f"La IA no ha podido responder ({e.status_code}).")
+    ultimo, motivos = None, []
+    for ronda in range(RONDAS):
+        if ronda:
+            time.sleep(PAUSA_ENTRE_RONDAS)   # el plan gratuito se satura a ratos: suele pasar en unos segundos
+        for modelo in _modelos():
+            if hasta is not None and time.monotonic() >= hasta:
+                raise _fallo(f"La IA está tardando demasiado. Prueba otra vez en un minuto. {_detalle(motivos)}")
+            try:
+                respuesta = _cliente().chat.completions.create(model=modelo, messages=mensajes, **extra)
+                return respuesta.choices[0].message
+            except (openai.RateLimitError, openai.InternalServerError, openai.APITimeoutError) as e:
+                ultimo = e  # cuota gratuita agotada o modelo saturado: siguiente modelo
+                motivos.append(str(getattr(e, "status_code", "sin respuesta a tiempo")))
+                print(f"IA · {modelo}: {type(e).__name__} {str(e)[:300]}", file=sys.stderr, flush=True)
+            except openai.AuthenticationError:
+                raise _fallo("La clave de la IA no es válida.")
+            except openai.NotFoundError:
+                raise _fallo(f"El modelo «{modelo}» no existe en este proveedor. Revisa IA_MODELOS.")
+            except openai.APIConnectionError:
+                raise _fallo("No hay conexión con la IA. Revisa internet.")
+            except openai.APIStatusError as e:
+                raise _fallo(f"La IA no ha podido responder ({e.status_code}).")
     if isinstance(ultimo, openai.RateLimitError):
-        raise _fallo("Se ha agotado la cuota gratuita de la IA por ahora. Prueba dentro de un rato.")
-    raise _fallo("La IA está saturada en este momento. Prueba otra vez en un minuto.")
+        raise _fallo(f"Se ha agotado la cuota gratuita de la IA por ahora. Prueba dentro de un rato. {_detalle(motivos)}")
+    raise _fallo(f"La IA está saturada en este momento. Prueba otra vez en un minuto. {_detalle(motivos)}")
+
+
+def _detalle(motivos: list[str]) -> str:
+    return f"(Detalle: {', '.join(motivos)})" if motivos else ""
 
 
 def _texto(prompt: str) -> str:
