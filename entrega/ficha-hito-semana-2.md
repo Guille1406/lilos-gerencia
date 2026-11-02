@@ -1,7 +1,7 @@
 # Ficha del hito de la semana 2
 
-1. **Problema:** Los gerentes de restaurante trabajan en plena sala y se les pasan las revisiones de neveras, hornos y demás equipos, con el historial y el gasto dispersos.
-2. **Usuario:** Los gerentes de los tres locales de Lilo Brunch.
-3. **Qué hará la app:** Avisar de las tareas de mantenimiento y escalar las atrasadas; guardar la ficha y la bitácora de cada equipo; y ofrecer un asistente de IA que responde con los datos de la app, lee placas y orienta ante averías.
-4. **Pieza de IA:** API de Gemini porque es gratuita, entiende fotos y puede consultar los datos de la app, que cambian cada día.
-5. **Enlace a la versión 0:** https://lilos-gerencia-ewnoezk4zt3ej97vu4eqem.streamlit.app (datos inventados; los PIN de prueba salen al entrar)
+1. **Problema:** Mis gerentes se pasan el día en sala y se les pasan las revisiones de neveras, hornos y demás máquinas. Tampoco tienen a mano qué se le ha hecho a cada una ni cuánto ha costado.
+2. **Usuario:** Los gerentes de mis tres restaurantes, Lilo Brunch.
+3. **Qué hará la app:** Avisar de lo que toca y de lo atrasado, guardar la historia de cada máquina y tener un asistente con IA que contesta con los datos de la app, lee placas con una foto y ayuda con las averías.
+4. **Pieza de IA:** API de Gemini porque es gratis, entiende fotos y puede mirar los datos del momento.
+5. **Enlace a la versión 0:** https://lilos-gerencia-ewnoezk4zt3ej97vu4eqem.streamlit.app (son datos inventados; los PIN para entrar salen en la primera pantalla)

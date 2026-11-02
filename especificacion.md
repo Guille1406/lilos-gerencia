@@ -1,76 +1,75 @@
 # Especificación · LilOS Gerencia
 
-> Especificación de la app de mantenimiento de equipos de Lilo Brunch, entregada en el reto del máster. De ella sale la ficha del hito de la semana 2.
+Lo que quiero que haga la app, explicado para que otra persona (o una IA) pueda construirla sin tener que preguntarme mucho.
 
 ## 1. Problema y usuario
 
-- **Quién tiene el problema:** los gerentes de los tres restaurantes de Lilo Brunch (dos en Barcelona y uno en Madrid), que trabajan en plena sala y casi nunca en una oficina.
-- **Cómo lo resuelve hoy:** con documentos del plan APPCC, llamadas a técnicos y lo que cada gerente recuerda.
-- **Qué le molesta de cómo lo hace hoy:** las revisiones se pasan de fecha, el historial y el gasto de cada equipo están dispersos, y ante una avería hay que buscar a quién llamar y qué comprobar.
-- **Qué parte resuelve la IA:** responde preguntas con los datos reales de la app, lee la foto de la placa de un equipo, propone su plan de mantenimiento, orienta ante una avería y resume por dónde empezar. Quedan fuera las decisiones y las reparaciones: el gerente revisa lo que propone la IA antes de guardarlo, y la avería la resuelve un técnico.
+- **Quién tiene el problema:** los gerentes de mis tres restaurantes, Lilo Brunch (dos en Barcelona y uno en Madrid). Se pasan el día en sala, casi nunca están en una oficina.
+- **Cómo lo resuelven hoy:** con los papeles del APPCC, llamando a los técnicos y tirando de memoria.
+- **Qué les molesta:** las revisiones se pasan de fecha, nadie tiene a mano lo que se le ha hecho a cada máquina ni cuánto ha costado, y cuando algo se rompe hay que ponerse a buscar a quién llamar.
+- **Qué hace la IA:** contesta preguntas con lo que hay en la app, lee la foto de la placa de una máquina, propone qué revisar y cada cuánto, y orienta cuando hay una avería. No decide ni arregla nada: el gerente revisa lo que propone antes de guardarlo, y la avería la resuelve el técnico.
 
-## 2. Qué hace el producto
+## 2. Qué hace la app
 
-1. **Plan y alertas:** muestra las tareas de mantenimiento de esta semana, este mes o este trimestre, y escala a dirección las atrasadas más de 7 días.
-2. **Equipos y bitácora:** guarda la ficha técnica, la garantía, el historial y el gasto de cada equipo. Al apuntar una tarea cumplida se recalcula su próxima fecha, y una avería marca el equipo como averiado.
-3. **Asistente con IA:** un chat que consulta los datos de la app y, si hace falta, internet. También lee placas, sugiere planes, orienta ante averías y resume la situación del local.
+1. **Avisa de lo que toca:** enseña las tareas de esta semana, este mes o este trimestre. Si algo lleva más de 7 días atrasado, se avisa a dirección.
+2. **Guarda la historia de cada máquina:** su ficha, la garantía, lo que se le ha hecho y lo que ha costado. Si se apunta una tarea como hecha, se calcula sola la siguiente fecha. Si se apunta una avería, la máquina queda marcada como averiada.
+3. **Tiene un asistente con IA:** un chat al que preguntarle cosas del local. También sirve para leer placas, sugerir planes de mantenimiento, ayudar con averías y hacer un resumen de por dónde empezar.
 
-La app tiene además otras páginas del día a día del restaurante (Hoy, Rumbo, comunicados, inspecciones). Estas tres funcionalidades son el alcance de este reto.
+La app tiene más pantallas del día a día del restaurante (Hoy, Rumbo, comunicados, inspecciones), pero para este reto me quedo con estas tres cosas.
 
-## 3. Entradas y salidas
+## 3. Qué entra y qué sale
 
 | El usuario da… | La app devuelve… | Ejemplo |
 |---|---|---|
-| Una pregunta en el chat | Una respuesta breve basada en los datos de la app | «¿Qué tengo pendiente esta semana y por dónde empiezo?» → lista de tareas ordenada por prioridad |
-| La foto de la placa de un equipo | Los campos de la ficha, para revisar y guardar | Foto de una nevera → tipo, marca, modelo, número de serie y temperaturas |
-| Un equipo | Las tareas de mantenimiento que le faltan, para marcar y añadir | Horno → limpieza y revisión periódicas propuestas |
-| El síntoma de una avería | Qué hacer ya, qué comprobar, causas posibles y si llamar al técnico | «La nevera no enfría» → pasos ordenados |
-| Un apunte en la bitácora | La próxima fecha recalculada o el equipo marcado como averiado | «Revisión hecha» → la tarea pasa a su siguiente fecha |
+| Una pregunta en el chat | Una respuesta corta con lo que hay en la app | «¿Qué tengo pendiente esta semana y por dónde empiezo?» → las tareas ordenadas por urgencia |
+| La foto de la placa de una máquina | La ficha rellenada, para revisarla y guardarla | Foto de una nevera → marca, modelo, número de serie y temperaturas |
+| Una máquina | Las tareas de mantenimiento que le faltan, para elegir cuáles añadir | Un horno → limpieza y revisiones periódicas |
+| Lo que le pasa a una máquina | Qué hacer ya, qué comprobar y si hay que llamar al técnico | «La nevera no enfría» → pasos en orden |
+| Un apunte en la bitácora | La siguiente fecha calculada, o la máquina marcada como averiada | «Revisión hecha» → la tarea pasa a su próxima fecha |
 
-## 4. La pieza de IA
+## 4. La IA
 
-- **Opción elegida:** API de un LLM (Gemini), en su plan gratuito, con herramientas que consultan la base de datos de la app.
-- **Por qué:** el asistente responde con los datos que cambian cada día, sin copiarlos a un índice, y Gemini también lee fotos. Se usa la API compatible con OpenAI, de modo que se puede cambiar de proveedor desde la configuración, sin tocar el código.
-- **Instrucciones para el modelo (system prompt):** está en `SISTEMA`, en `gerencia/core/ia.py`. Le dice que es el asistente del gerente, que escribe en español de España, claro y práctico para leer en el móvil en mitad del servicio, que tiene presente la seguridad alimentaria y que no inventa datos: si algo no está en la app ni lo encuentra, lo dice.
+- **Qué uso:** Gemini, en su plan gratuito, y le doy acceso a los datos de la app para que consulte lo que necesite.
+- **Por qué:** es gratis, entiende fotos y puede mirar los datos del momento, que cambian cada día. Además, si un día quiero cambiar de proveedor, no tengo que tocar el código.
+- **Instrucciones que le doy:** están en `SISTEMA`, en `gerencia/core/ia.py`. Básicamente: eres el asistente del gerente, escribe claro porque lo va a leer en el móvil en mitad del servicio, ten siempre presente la seguridad alimentaria, y no te inventes nada; si no lo sabes, dilo.
 
-## 5. Flujo del usuario
+## 5. Cómo se usa
 
-1. El usuario entra con su PIN personal (o como invitado, solo lectura) y ve lo que tiene que hacer hoy.
-2. Consulta las alertas, abre la ficha de un equipo, apunta algo en la bitácora o escribe al asistente.
-3. Recibe las tareas actualizadas o la respuesta de la IA. Lo que propone la IA no se guarda hasta que lo revisa.
+1. Entras con tu PIN y ves lo que tienes que hacer hoy.
+2. Miras las alertas, abres una máquina, apuntas algo en la bitácora o le preguntas al asistente.
+3. Se actualizan las tareas o te responde la IA. Lo que propone la IA no se guarda hasta que tú lo revisas.
 
-## 6. Restricciones
+## 6. Condiciones
 
-- Coste cero: capa gratuita de la API y despliegue gratuito (ruta A).
-- Las claves van en secretos, nunca en el código.
-- Sin datos personales reales en el repositorio ni en la versión pública: sin claves de Supabase, la app arranca en modo demostración, con datos inventados que viven en la sesión de cada visitante (`gerencia/core/demo.py`).
-- Lenguaje sencillo, para alguien sin conocimientos técnicos.
-- Pocos clics y textos directos: se usa en mitad del servicio, muchas veces desde el móvil.
-- El invitado puede recorrer la app, pero no guardar, borrar ni enviar nada.
+- Tiene que costar cero: IA gratis y publicación gratis (ruta A).
+- Las claves van en los secretos, nunca en el código.
+- Nada de datos reales de personas ni en el repositorio ni en la versión pública. Por eso, si la app no encuentra claves de Supabase, arranca con datos inventados (`gerencia/core/demo.py`). Cada visitante tiene los suyos y se borran al cerrar la pestaña.
+- Tiene que entenderla cualquiera, sin saber nada de tecnología.
+- Pocos clics y textos directos: se usa en pleno servicio y muchas veces desde el móvil.
+- Si hay contraseña de invitado, ese perfil puede verlo, pero no guardar, borrar ni enviar nada.
 
-## 7. Criterios de aceptación
+## 7. Cómo sé que funciona
 
-La app está bien si:
-
-| Entrada | Resultado esperado |
+| Si pasa esto | Debería pasar esto |
 |---|---|
-| «¿Qué tengo pendiente esta semana y por dónde empiezo?» | Responde con las tareas reales del local, lo más importante primero |
-| Foto de una placa | Rellena la ficha para que el usuario la revise antes de guardar |
-| Archivo que no es una imagen válida | «No se ha podido abrir la foto. Prueba con otra en JPG o PNG.» |
-| Mensaje vacío | No se envía nada a la IA |
-| Pregunta sobre algo que no está en la app ni en internet | Dice que no lo sabe, sin inventar datos |
-| Se agota la cuota de un modelo | Prueba el siguiente; si se agotan todos: «Se ha agotado la cuota gratuita de la IA por ahora. Prueba dentro de un rato.» |
+| «¿Qué tengo pendiente esta semana y por dónde empiezo?» | Contesta con las tareas de verdad, primero lo más urgente |
+| Subo la foto de una placa | Rellena la ficha y me deja revisarla antes de guardar |
+| Subo un archivo que no es una foto válida | «No se ha podido abrir la foto. Prueba con otra en JPG o PNG.» |
+| Envío un mensaje vacío | No pasa nada, no se le manda a la IA |
+| Pregunto algo que no está en la app ni en internet | Dice que no lo sabe y no se inventa nada |
+| Se acaba la cuota de un modelo | Prueba con otro; si se acaban todos: «Se ha agotado la cuota gratuita de la IA por ahora. Prueba dentro de un rato.» |
 | No hay conexión con la IA | «No hay conexión con la IA. Revisa internet.» |
-| El invitado intenta guardar | «Modo invitado: no se ha guardado nada» |
+| La IA no contesta en mucho rato | «La IA está tardando demasiado. Prueba otra vez en un minuto.» |
+| Un invitado intenta guardar | «Modo invitado: no se ha guardado nada» |
 
-## 8. Fuera de alcance (por ahora)
+## 8. Lo que dejo para después
 
 - La etiquetadora y la impresión de etiquetas desde el local.
 - Fotos en la bitácora.
-- Sondas de temperatura y acciones automáticas según la temperatura.
-- Comparativa entre locales para dirección.
+- Sondas de temperatura y que la app actúe sola según la temperatura.
+- Comparar locales entre sí, para dirección.
 
-## 9. Despliegue
+## 9. Publicación
 
-- **Ruta:** A (Streamlit Community Cloud), con `gerencia/app.py` como archivo principal.
-- **Si trabajáis en equipo (opcional):** trabajo individual.
+- **Ruta:** A, Streamlit Community Cloud. El archivo principal es `gerencia/app.py`.
+- **Equipo:** lo he hecho yo solo.

@@ -1,41 +1,40 @@
 # AGENTS.md · LilOS Gerencia
 
-> Este fichero lo leen los agentes de programación antes de tocar el código. `CLAUDE.md` y `GEMINI.md` remiten aquí.
+Lo que tiene que saber cualquier agente de IA antes de tocar este código. `CLAUDE.md` y `GEMINI.md` mandan aquí.
 
-## Qué es este proyecto
+## De qué va esto
 
-App para que los gerentes de los tres restaurantes de Lilo Brunch controlen el mantenimiento de sus equipos, con un asistente de IA que consulta los datos de la propia app.
+Una app para que los gerentes de mis tres restaurantes lleven el mantenimiento de sus máquinas, con un asistente de IA que mira los datos de la propia app.
 
-## Cómo está hecho
+## Cómo está montada
 
-- Python 3.11 o superior.
-- Interfaz: Streamlit (ruta A). Archivo principal: `gerencia/app.py`.
-- IA: API de Gemini en su plan gratuito, con el SDK `openai` y la dirección compatible de Google. Los modelos están en la constante `MODELOS_GEMINI` de `gerencia/core/ia.py`; si uno se satura, se prueba el siguiente.
-- Datos: sin claves de Supabase, modo demostración con datos inventados en memoria (`gerencia/core/demo.py`). Con claves, Supabase (PostgreSQL), con las tablas de `supabase/`.
-- Archivos: `gerencia/core/` (lógica), `gerencia/paginas/` (páginas), `gerencia/tests/` (pruebas), `gerencia/requirements.txt` (dependencias) y `README.md`.
-- La especificación completa está en [especificacion.md](especificacion.md).
+- Python 3.11 o más nuevo, con Streamlit (ruta A). Se arranca desde `gerencia/app.py`.
+- La IA es Gemini, en su plan gratis, usando la librería `openai`. La lista de modelos está en `MODELOS_GEMINI`, en `gerencia/core/ia.py`. Si uno se satura, pasa al siguiente.
+- Sin claves de Supabase, la app funciona con datos inventados (`gerencia/core/demo.py`). Con claves, usa Supabase, con las tablas de `supabase/`.
+- La lógica está en `gerencia/core/`, las pantallas en `gerencia/paginas/`, las pruebas en `gerencia/tests/` y las dependencias en `gerencia/requirements.txt`.
+- Lo que tiene que hacer la app está en [especificacion.md](especificacion.md).
 
 ## Reglas
 
-- Las claves van SIEMPRE en secretos: `.streamlit/secrets.toml` en local (fuera de git) y Settings → Secrets en Streamlit Cloud. Se leen con `db.config()`. Nunca en el código, en el README ni en el chat.
-- Cada llamada a la API pasa por `_completar()` en `gerencia/core/ia.py`, que traduce los fallos a un `ErrorIA` con un mensaje claro para el usuario.
-- Toda escritura en la base pasa por `gerencia/core/db.py`, que la corta en modo invitado. No la saltes.
-- Textos de la interfaz en español, sencillos y directos, pensados para alguien sin conocimientos técnicos que trabaja en plena sala.
-- Cambios pequeños: uno por petición. Al terminar, explica qué has cambiado y por qué.
-- Si añades una librería, añádela también a `gerencia/requirements.txt` y dilo.
-- No uses datos personales reales. Para probar, inventa ejemplos.
+- Las claves van SIEMPRE en los secretos: `.streamlit/secrets.toml` en local (no se sube) y Settings → Secrets en Streamlit Cloud. Se leen con `db.config()`. Nunca en el código, en el README ni en el chat.
+- Todas las llamadas a la IA pasan por `_completar()`, en `gerencia/core/ia.py`. Si algo falla, el usuario tiene que ver un mensaje que se entienda.
+- Todo lo que se guarda pasa por `gerencia/core/db.py`, que lo bloquea para los invitados. No te lo saltes.
+- Textos en español, sencillos y directos. Quien lo usa está trabajando en sala y no sabe de tecnología.
+- Cambios pequeños, de uno en uno. Al terminar, cuéntame qué has cambiado y por qué.
+- Si añades una librería, ponla también en `gerencia/requirements.txt` y dímelo.
+- Nada de datos reales de personas. Para probar, invéntatelos.
 
 ## Cómo comprobar que funciona
 
-- `streamlit run gerencia/app.py` en local (con `.streamlit/secrets.toml`), o haz push y revisa la app en Streamlit Cloud.
-- `pytest gerencia/tests`.
-- Casos de prueba (entrada → lo que esperamos):
-  1. «¿Qué tengo pendiente esta semana y por dónde empiezo?» → las tareas reales del local, lo más importante primero.
-  2. Foto de la placa de un equipo → la ficha rellenada para revisarla antes de guardar.
-  3. Una pregunta sobre algo que no está en la app ni en internet → dice que no lo sabe, sin inventar datos.
+- En local: `streamlit run gerencia/app.py`. Sin claves arranca con los datos inventados. O sube los cambios y mira la app en Streamlit Cloud.
+- Las pruebas: `pytest gerencia/tests`.
+- Tres preguntas para probar a mano:
+  1. «¿Qué tengo pendiente esta semana y por dónde empiezo?» → las tareas de verdad, primero lo más urgente.
+  2. La foto de la placa de una máquina → la ficha rellenada, para revisarla antes de guardar.
+  3. Algo que no está en la app ni en internet → dice que no lo sabe y no se inventa nada.
 
-## Qué no hacer
+## Lo que no debes hacer
 
 - No borres ni reescribas el README sin preguntar.
-- No cambies el modelo ni la arquitectura sin preguntar.
-- No hagas push ni despliegues sin que lo haya revisado.
+- No cambies los modelos ni cómo está montada la app sin preguntar.
+- No subas ni publiques nada sin que yo lo haya visto.
