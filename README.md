@@ -70,4 +70,12 @@ Este repositorio es la entrega del máster, separada del sistema completo de Lil
 
 ## Capturas
 
-[PENDIENTE: la app funcionando, la app ante un caso límite, un momento del trabajo con la IA y la prueba. Sin ninguna clave a la vista.]
+La app publicada, con el asistente respondiendo a partir de datos inventados:
+
+![El asistente responde con los equipos del local](docs/capturas/app-asistente.png)
+
+La app ante un error: una clave de IA no válida, con su mensaje:
+
+![Aviso de clave de IA no válida](docs/capturas/error-clave-ia.jpg)
+
+El documento de la entrega incluye además un momento del trabajo con la IA y una de las pruebas.
