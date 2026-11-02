@@ -42,6 +42,14 @@ def _preparar(monkeypatch, cliente):
     monkeypatch.setattr(ia.registro, "apuntar", lambda *a, **k: None)
 
 
+def test_distingue_no_conectar_de_no_contestar():
+    peticion = httpx.Request("POST", "http://ia.invalid")
+    error = openai.APITimeoutError(request=peticion)
+    assert ia._motivo(error) == "sin respuesta a tiempo"
+    error.__cause__ = httpx.ConnectTimeout("sin conexión")
+    assert ia._motivo(error) == "sin conexión a tiempo"
+
+
 def test_si_se_satura_reintenta_y_responde(monkeypatch):
     _preparar(monkeypatch, _ClienteFalso(fallos=3))
     assert ia._completar([]) == "hola"

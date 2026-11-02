@@ -93,7 +93,7 @@ def _completar(mensajes: list[dict], herramientas: list[dict] | None = None, jso
                 return respuesta.choices[0].message
             except (openai.RateLimitError, openai.InternalServerError, openai.APITimeoutError) as e:
                 ultimo = e  # cuota gratuita agotada o modelo saturado: siguiente modelo
-                motivos.append(str(getattr(e, "status_code", "sin respuesta a tiempo")))
+                motivos.append(_motivo(e))
                 print(f"IA · {modelo}: {type(e).__name__} {str(e)[:300]}", file=sys.stderr, flush=True)
             except openai.AuthenticationError:
                 raise _fallo("La clave de la IA no es válida.")
@@ -106,6 +106,13 @@ def _completar(mensajes: list[dict], herramientas: list[dict] | None = None, jso
     if isinstance(ultimo, openai.RateLimitError):
         raise _fallo(f"Se ha agotado la cuota gratuita de la IA por ahora. Prueba dentro de un rato. {_detalle(motivos)}")
     raise _fallo(f"La IA está saturada en este momento. Prueba otra vez en un minuto. {_detalle(motivos)}")
+
+
+def _motivo(error: Exception) -> str:
+    """Código del fallo; en los de tiempo, si no se llegó a conectar o si el modelo no contestó."""
+    if isinstance(error.__cause__, httpx.ConnectTimeout):
+        return "sin conexión a tiempo"
+    return str(getattr(error, "status_code", "sin respuesta a tiempo"))
 
 
 def _detalle(motivos: list[str]) -> str:
