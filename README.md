@@ -1,6 +1,6 @@
 # LilOS Gerencia
 
-**Enlace a la app:** https://lilos-gerencia.streamlit.app (versión de demostración, con datos inventados; los PIN de prueba salen al entrar)
+**Enlace a la app:** https://lilos-gerencia-ewnoezk4zt3ej97vu4eqem.streamlit.app (versión de demostración, con datos inventados; los PIN de prueba salen al entrar)
 **Autor/a:** Guillermo Jesús Pinto Henriques
 
 ## Pitch

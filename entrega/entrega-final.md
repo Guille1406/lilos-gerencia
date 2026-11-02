@@ -4,7 +4,7 @@
 
 ## 1. Enlaces
 
-- **App desplegada:** https://lilos-gerencia.streamlit.app (versión de demostración, con datos inventados; los PIN de prueba salen al entrar)
+- **App desplegada:** https://lilos-gerencia-ewnoezk4zt3ej97vu4eqem.streamlit.app (versión de demostración, con datos inventados; los PIN de prueba salen al entrar)
 - **Repositorio:** https://github.com/Guille1406/lilos-gerencia
 
 ## 2. Problema y usuario
