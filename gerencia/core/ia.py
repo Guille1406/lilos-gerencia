@@ -26,8 +26,8 @@ from core import db, intranet, plan, registro
 
 GEMINI = "https://generativelanguage.googleapis.com/v1beta/openai/"
 MODELOS_GEMINI = "gemini-flash-lite-latest,gemini-3.5-flash-lite,gemini-flash-latest"
-SEGUNDOS_POR_LLAMADA = 25   # si un modelo no contesta en este tiempo, se pasa al siguiente
-SEGUNDOS_POR_PREGUNTA = 60  # pasado este tiempo, el asistente avisa en vez de seguir «Pensando…»
+SEGUNDOS_POR_LLAMADA = 45    # si un modelo no contesta en este tiempo, se pasa al siguiente (el plan gratuito puede tardar 30 s)
+SEGUNDOS_POR_PREGUNTA = 150  # pasado este tiempo, el asistente avisa en vez de seguir «Pensando…»
 RONDAS = 2                  # veces que se prueba la lista de modelos antes de avisar
 PAUSA_ENTRE_RONDAS = 4      # segundos
 
