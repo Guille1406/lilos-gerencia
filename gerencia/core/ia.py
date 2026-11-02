@@ -13,6 +13,7 @@ equipo desde una foto, sugerir su plan de mantenimiento, orientar ante una aver�
 import base64
 import io
 import json
+import time
 from datetime import date
 
 import httpx
@@ -24,6 +25,8 @@ from core import db, intranet, plan, registro
 
 GEMINI = "https://generativelanguage.googleapis.com/v1beta/openai/"
 MODELOS_GEMINI = "gemini-flash-lite-latest,gemini-3.5-flash-lite,gemini-flash-latest"
+SEGUNDOS_POR_LLAMADA = 25   # si un modelo no contesta en este tiempo, se pasa al siguiente
+SEGUNDOS_POR_PREGUNTA = 60  # pasado este tiempo, el asistente avisa en vez de seguir «Pensando…»
 
 SISTEMA = (
     "Eres el asistente del gerente de Lilo Brunch, un grupo de tres restaurantes de brunch en España (Lilo Sagrada "
@@ -64,16 +67,21 @@ def _modelos() -> list[str]:
 
 @st.cache_resource
 def _cliente() -> openai.OpenAI:
-    return openai.OpenAI(api_key=_clave(), base_url=db.config("IA_BASE_URL") or GEMINI, max_retries=0, timeout=40)
+    return openai.OpenAI(api_key=_clave(), base_url=db.config("IA_BASE_URL") or GEMINI, max_retries=0,
+                         timeout=SEGUNDOS_POR_LLAMADA)
 
 
-def _completar(mensajes: list[dict], herramientas: list[dict] | None = None, json_salida: bool = False):
-    """Una llamada al modelo; si está saturado o sin cuota, prueba el siguiente de la lista."""
+def _completar(mensajes: list[dict], herramientas: list[dict] | None = None, json_salida: bool = False,
+               hasta: float | None = None):
+    """Una llamada al modelo; si está saturado o sin cuota, prueba el siguiente de la lista.
+    `hasta` (time.monotonic) es la hora límite: pasada, no se prueba ningún modelo más."""
     extra = {"tools": herramientas} if herramientas else {}
     if json_salida:
         extra["response_format"] = {"type": "json_object"}
     ultimo = None
     for modelo in _modelos():
+        if hasta is not None and time.monotonic() >= hasta:
+            raise _fallo("La IA está tardando demasiado. Prueba otra vez en un minuto.")
         try:
             respuesta = _cliente().chat.completions.create(model=modelo, messages=mensajes, **extra)
             return respuesta.choices[0].message
@@ -201,8 +209,9 @@ def asistente(historial: list[dict], local_id: str, al_consultar=None) -> str:
         "reales antes de responder; puedes usar varias. Busca en internet solo lo que no esté en la intranet y di de "
         "dónde sale. Responde en markdown breve, con lo más importante primero."
     )}] + historial
+    hasta = time.monotonic() + SEGUNDOS_POR_PREGUNTA
     for _ in range(8):
-        mensaje = _completar(mensajes, HERRAMIENTAS)
+        mensaje = _completar(mensajes, HERRAMIENTAS, hasta=hasta)
         llamadas = mensaje.tool_calls or []
         if not llamadas:
             return (mensaje.content or "").strip() or "No he sabido responder a eso."
