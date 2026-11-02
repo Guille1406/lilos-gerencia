@@ -1,68 +1,71 @@
-# LilOS · Gerencia
+# LilOS Gerencia
 
-App de gestión de **Lilo Brunch** (Lilo Sagrada Familia, Lilo Enric Granados y Lilo Madrid) para controlar el
-mantenimiento de neveras, hornos y demás equipos de los tres locales, con un asistente de IA gratuito.
+**Enlace a la app:** https://lilostest.streamlit.app
+**Autor/a:** Guillermo Pinto
 
-Es el proyecto de un máster de IA, hecho con **Python + Streamlit** y **Supabase** (PostgreSQL) y desarrollado con
-**Claude Code** (agente de programación con IA de Anthropic).
+## Pitch
 
-## Qué hace
+Los gerentes de los tres restaurantes de Lilo Brunch tienen que mantener neveras, hornos y demás equipos mientras trabajan en plena sala, y las revisiones se les pueden pasar de fecha. LilOS Gerencia les enseña qué toca esta semana, guarda la ficha y la bitácora de cada equipo, y escala a dirección lo que lleva más de 7 días atrasado. La IA contesta con los datos de la propia app, lee la foto de la placa de un equipo y orienta ante una avería, sin que el gerente tenga que buscar en documentos. Al usarla yo mismo vi que la pantalla Hoy tenía botones demasiado grandes y una rutina que sobraba, así que la compacté y metí la plancha dentro del cierre. Después llevaría lo aprendido a una web propia para las tablets de cada local, que ya está en marcha, con la pantalla Hoy como lista de comprobación de un avión.
 
-- **Acceso con PIN personal** (como un TPV) y perfiles por rol: admin > dirección > gerencia > trabajadores. Cada uno
-  ve lo suyo; se bloquea sola tras unos minutos sin uso.
-- **Alertas** de tareas para esta semana, este mes o este trimestre; las atrasadas más de 7 días se escalan a
-  dirección. El responsable es el gerente de cada local y, como segunda línea, los directivos.
-- **Equipos**: ficha técnica, plan de mantenimiento periódico, garantía, historial y gasto.
-- **Bitácora**: cualquier trabajador apunta mantenimientos, inspecciones, averías o reparaciones; al cumplir una
-  tarea se recalcula su próxima fecha y una avería marca el equipo como averiado.
-- **Asistente del gerente** con IA gratuita: un chat que consulta los datos reales de la intranet (equipos, plan,
-  bitácora y gastos, catálogo, etiquetas impresas, personal, documentación) y busca en internet cuando hace falta.
-  También lee la foto de la placa de un equipo, sugiere su plan de mantenimiento, orienta ante averías y resume
-  qué hacer primero (`gerencia/core/ia.py`, `gerencia/core/intranet.py`). Funciona con cualquier proveedor
-  compatible con OpenAI; por defecto, el plan gratuito de Google Gemini.
-- **Perfil invitado** de solo lectura para enseñar la app sin que se pueda guardar nada.
+## El problema
 
-## Estructura
+Los gerentes son los responsables del mantenimiento de su local, pero casi nunca están en una oficina. Hoy dependen de los documentos del plan APPCC, de las llamadas a los técnicos y de su memoria. Una revisión olvidada puede acabar en una avería en pleno servicio o en un problema de seguridad alimentaria, y el historial y el gasto de cada equipo están dispersos.
 
-| Carpeta | Contenido |
-|---|---|
-| `gerencia/app.py` | Punto de entrada de la app |
-| `gerencia/core/` | Lógica: datos, sesión, IA, plan de mantenimiento, avisos… |
-| `gerencia/paginas/` | Páginas de la app |
-| `gerencia/tests/` | Pruebas (`pytest`) |
-| `supabase/` | Tablas de la base de datos |
-| `.streamlit/` | Tema de la app y modelo de claves |
+## Qué hace la app
 
-## Ejecutarla en local
+1. El gerente entra con su PIN personal y ve lo que tiene que hacer hoy.
+2. En **Alertas** consulta las tareas de esta semana, este mes o este trimestre, y las atrasadas.
+3. En **Equipos y mobiliario** abre la ficha técnica, la garantía, el plan, el historial y el gasto de cada equipo. Puede rellenar la ficha con una foto de la placa o pedir un plan de mantenimiento a la IA.
+4. En **Bitácora** cualquier trabajador apunta mantenimientos, inspecciones, averías o reparaciones. Al cumplir una tarea se recalcula su próxima fecha, y una avería marca el equipo como averiado.
+5. En **Asistente** pregunta lo que necesite, por ejemplo: «¿Qué equipos han dado más problemas y cuánto nos han costado?».
 
-Necesita Python 3.11 o superior y un proyecto de Supabase.
+Para enseñarla sin riesgo hay un **perfil invitado**: puede recorrer la app, pero no puede guardar, borrar ni enviar nada.
+
+## La pieza de IA
+
+- **Qué usa:** la API de Gemini en su plan gratuito (`gemini-flash-lite-latest`, con `gemini-3.5-flash-lite` y `gemini-flash-latest` de reserva), con herramientas que consultan la base de datos. Si hace falta buscar en internet, usa Tavily o la Wikipedia.
+- **Por qué esa opción:** es gratis, entiende fotos y puede consultar datos que cambian cada día sin mantener un índice aparte. Al usar la API compatible con OpenAI, se puede cambiar de proveedor desde la configuración.
+- **Qué pasa si falla:** si un modelo se satura o se queda sin cuota, se prueba el siguiente. Si fallan todos, la app avisa con un mensaje claro («Se ha agotado la cuota gratuita de la IA por ahora. Prueba dentro de un rato.») y el resto de la app sigue funcionando.
+
+## Cómo la he construido
+
+- **Herramientas:** Claude Code para programar y Claude Design para el diseño.
+- **Fichero de contexto del agente:** [AGENTS.md](AGENTS.md), con [CLAUDE.md](CLAUDE.md) y [GEMINI.md](GEMINI.md) remitiendo a él. La especificación está en [especificacion.md](especificacion.md).
+- **Prompts clave** (copiados de mis conversaciones; `[…]` marca lo que he recortado):
+  1. «tengo que hacer una parte de este programa por medio de streamlit para la universidad. algo que lleve integrado la IA para resolver problemas. […] que se ocurre para hacer por alla para el trabajo del master que luego no sea un trabajo perdido?»
+  2. «que te parece si ahora hacemos el control de mantenimiento del mobiliario? mesones, neveras, hornos, etc. todo aquello que merezca ser enlistado con su ficha tecnica, su bitácora de cambios/mantenimientos/reparaciones, y sus propio sistema de alertas segun desplegable de tiempos (de aqui a una semana, un mes, un trimestre) por planificacion.»
+  3. «uno de los pilares de esta app es que es una app que será una solucion y no más trabajo para los trabajadores. […] debo darles flujos de trabajo con los menores clicks y menores pantallas y menores formularios posibles. quizá para implementarlo por primera vez si, pero luego tiene que funcionar como encender un avión.»
+  4. «para mi admin debe haber un terminal o algun sitio donde todos los errores o warnings de la aplicacion se acumulen en lista.»
+  5. «crea un perfil para la version de streamlit que no pueda dañar nada de lo que tenemos. actualmente tiene clave y si le doy la mia podran ver todo.»
+- **Qué delegué al agente y qué revisé a mano:** delegué el código, las tablas de la base de datos y las pruebas automáticas. Decidí yo qué debía hacer la app y cómo debía sentirse, usé cada pantalla y le devolví los fallos tal como me salían, y configuré los Secrets en Streamlit Cloud.
+
+## Prueba y mejora
+
+| Quién la probó | Qué probó | Qué pasó | Qué cambié |
+|---|---|---|---|
+| Yo como usuario | La pantalla Hoy | Botones muy grandes para textos cortos, y la plancha como rutina aparte | Pantalla más limpia y la plancha dentro del cierre |
+| Yo como usuario | Entrar a la pantalla Hoy | Error `TypeError` en `registro_rapido()` | Corregido el fallo |
+| Yo como usuario | La app publicada en Streamlit Cloud | No encontraba las claves de Supabase y no estaba claro por qué | Un diagnóstico que enseña los nombres de las claves, nunca sus valores |
+| Yo como usuario | Entrar como invitado | La app iba directa al PIN y no había por dónde entrar | Botón «Entrar como invitado» en la pantalla del PIN |
+| [PENDIENTE: compañero/a] | [PENDIENTE] | [PENDIENTE] | [PENDIENTE] |
+
+## Ejecutar en local (opcional)
+
+Necesita un proyecto de Supabase.
 
 ```bash
 pip install -r gerencia/requirements.txt
 streamlit run gerencia/app.py
 ```
 
-1. Copia `.streamlit/secrets.toml.example` como `.streamlit/secrets.toml` y pon tus claves de Supabase y, para la IA,
-   `GEMINI_API_KEY`. Ese archivo no se sube nunca a git.
-2. En el editor SQL de Supabase, ejecuta `supabase/schema.sql`, `supabase/mantenimiento.sql`, `supabase/appcc.sql`,
-   `supabase/comunicados.sql` y `supabase/acceso.sql`. El resto de archivos de `supabase/` activan módulos opcionales.
-3. Crea la primera cuenta (admin) con `python gerencia/crear_admin.py`; el resto de personas, desde la página
-   👥 Perfiles.
+1. Copia `.streamlit/secrets.toml.example` como `.streamlit/secrets.toml` y pon tus claves. Ese archivo no se sube nunca a git.
+2. En el editor SQL de Supabase, ejecuta `supabase/schema.sql`, `supabase/mantenimiento.sql`, `supabase/appcc.sql`, `supabase/comunicados.sql` y `supabase/acceso.sql`. El resto de archivos de `supabase/` activan módulos opcionales.
+3. Crea la primera cuenta con `python gerencia/crear_admin.py`.
 
-## Publicarla en Streamlit Community Cloud
+Para las pruebas: `pip install pytest` y `pytest gerencia/tests`.
 
-Elige este repositorio, la rama `main` y `gerencia/app.py` como archivo principal, y copia las claves en
-**Settings → Secrets**. Conviene poner `APP_PASSWORD`, y `INVITADO_PASSWORD` para compartirla con el perfil invitado.
+Este repositorio es la entrega del máster, separada del sistema completo de LilOS: no incluye la etiquetadora, ni datos reales ni claves. La versión de la app se lee de `package.json`.
 
-## Pruebas
+## Capturas
 
-```bash
-pip install pytest
-pytest gerencia/tests
-```
-
-## Qué no está aquí
-
-Este repositorio es la entrega del máster, separada del sistema completo de LilOS. No incluye la etiquetadora ni el
-resto de apps, y tampoco datos reales del negocio ni claves: están en la base de datos y en los Secrets. La versión
-de la app se lee de `package.json`.
+[PENDIENTE: la app funcionando, la app ante un caso límite, un momento del trabajo con la IA y la prueba. Sin ninguna clave a la vista.]
