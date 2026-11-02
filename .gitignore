@@ -17,4 +17,5 @@ Thumbs.db
 
 # Documento de la entrega (va a Blackboard, no al repositorio)
 entrega/*.docx
+entrega/*.pdf
 entrega/capturas/

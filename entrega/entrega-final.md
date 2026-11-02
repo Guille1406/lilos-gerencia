@@ -60,9 +60,9 @@ Las tres últimas filas salen del Q&A con los trabajadores en el uso diario, sob
 
 1. **La app funcionando** en su caso principal.
    [PENDIENTE: captura]
-2. **La app ante un caso límite o un error:** por ejemplo, una foto no válida o la cuota agotada, con su mensaje.
+2. **La app ante un caso límite o un error:** una clave de IA no válida, con su mensaje.
    [PENDIENTE: captura]
-3. **El trabajo con la IA:** un momento de la conversación con Claude Code donde se vea uno de los prompts clave y lo que devolvió.
+3. **El trabajo con la IA:** uno de mis prompts clave y lo que devolvió Claude Code.
    [PENDIENTE: captura]
-4. **La prueba:** la respuesta de un compañero en el debate del hito o la app con el caso que me hizo cambiar algo.
+4. **La prueba:** la app con un caso que me hizo cambiar algo.
    [PENDIENTE: captura]
